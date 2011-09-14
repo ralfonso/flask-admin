@@ -17,9 +17,11 @@
       {% set model_pk = _get_pk_value(model_instance) %}
       <li>
         <a href="{{ url_for('.edit', model_name=model_name, model_key=model_pk) }}">{{ model_instance }}</a>
-        <a href="{{ url_for('.delete', model_name=model_name, model_key=model_pk) }}" title="delete">
-          <div class="ui-widget ui-state-default ui-corner-all" title="delete"><span class="ui-icon ui-icon-trash"></span></div>
-        </a>        <!-- <div  title=".ui-icon-plus"><span class="ui-icon ui-icon-plus"></span></div> -->
+        {% if not prevent_delete: -%}
+          <a href="{{ url_for('.delete', model_name=model_name, model_key=model_pk) }}" title="delete">
+            <div class="ui-widget ui-state-default ui-corner-all" title="delete"><span class="ui-icon ui-icon-trash"></span></div>
+          </a>        <!-- <div  title=".ui-icon-plus"><span class="ui-icon ui-icon-plus"></span></div> -->
+        {% endif -%}
         <a href="{{ url_for('.edit', model_name=model_name, model_key=model_pk) }}" title="edit">
           <div class="ui-widget ui-state-default ui-corner-all" title="edit"><span class="ui-icon ui-icon-pencil"></span></div>
         </a>
@@ -30,9 +32,11 @@
     {% endfor %}
     <li>
       {{ render_pagination(pagination, '.list_view', model_name=model_name) }}
-      <a title="add new {{ model_name }}" href="{{ url_for('.add', model_name=model_name) }}">
-        <div class="ui-widget ui-state-default ui-corner-all" title=".ui-icon-plusthick"><span class="ui-icon ui-icon-plusthick"></span></div>
-      </a>
+      {% if not disallow_add: -%}
+        <a title="add new {{ model_name }}" href="{{ url_for('.add', model_name=model_name) }}">
+          <div class="ui-widget ui-state-default ui-corner-all" title=".ui-icon-plusthick"><span class="ui-icon ui-icon-plusthick"></span></div>
+        </a>
+      {% endif -%}
     </li>
   </ul>
   <!-- <div  title=".ui-icon-plus"><span class="ui-icon ui-icon-plus"></span></div> -->

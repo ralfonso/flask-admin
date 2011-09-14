@@ -34,7 +34,8 @@ from wtforms.ext.sqlalchemy import fields as sa_fields
 
 def create_admin_blueprint(
     models, db_session, name='admin', model_forms=None, exclude_pks=True,
-    list_view_pagination=25, view_decorator=None, **kwargs):
+    list_view_pagination=25, view_decorator=None, disallow_add_models=None, prevent_delete_models=None, 
+    **kwargs):
     """
     Returns a blueprint that provides the admin interface views. The
     blueprint that is returned will still need to be registered to
@@ -97,6 +98,12 @@ def create_admin_blueprint(
     if not model_forms:
         model_forms = {}
 
+    if not disallow_add_models:
+        disallow_add_models = []
+
+    if not prevent_delete_models:
+        prevent_delete_models = []
+
     #XXX: fix base handling so it will work with non-Declarative models
     if type(models) == types.ModuleType:
         model_dict = dict(
@@ -150,6 +157,9 @@ def create_admin_blueprint(
                 return "%s cannot be accessed through this admin page" % (
                     model_name,)
             model = model_dict[model_name]
+
+            disallow_add = model_name in disallow_add_models
+            prevent_delete = model_name in prevent_delete_models
             model_instances = db_session.query(model)
             per_page = list_view_pagination
             page = int(request.args.get('page', '1'))
@@ -163,7 +173,9 @@ def create_admin_blueprint(
                 _get_pk_value=_get_pk_value,
                 model_instances=pagination.items,
                 model_name=model_name,
-                pagination=pagination)
+                pagination=pagination,
+                disallow_add=disallow_add,
+                prevent_delete=prevent_delete)
         return list_view
 
     def create_edit_view():
@@ -227,7 +239,7 @@ def create_admin_blueprint(
             """
             Create a new instance of a model.
             """
-            if not model_name in model_dict.keys():
+            if not model_name in model_dict.keys() or model_name in disallow_add_models:
                 return "%s cannot be accessed through this admin page" % (
                     model_name)
             model = model_dict[model_name]
@@ -267,7 +279,7 @@ def create_admin_blueprint(
             """
             Delete an instance of a model.
             """
-            if not model_name in model_dict.keys():
+            if not model_name in model_dict.keys() or model_name in prevent_delete_models:
                 return "%s cannot be accessed through this admin page" % (
                     model_name,)
             model = model_dict[model_name]
