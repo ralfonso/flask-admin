@@ -18,15 +18,14 @@ from setuptools import setup
 
 setup(
     name='Flask-Admin',
-    version='0.1.2',
+    version='0.2.1',
     url='https://github.com/wilsaj/flask-admin/',
     license='BSD',
     author='Andy Wilson',
     author_email='wilson.andrew.j@gmail.com',
     description='Flask extenstion module that provides an admin interface',
     long_description=__doc__,
-    packages=['flaskext'],
-    namespace_packages=['flaskext'],
+    packages=['flask_admin'],
     include_package_data=True,
     zip_safe=False,
     platforms='any',
@@ -38,6 +37,7 @@ setup(
     test_suite='test_admin.suite',
     tests_require=[
         'Flask-SQLAlchemy>=0.12',
+        'Flask-Testing',
     ],
     classifiers=[
         'Development Status :: 4 - Beta',

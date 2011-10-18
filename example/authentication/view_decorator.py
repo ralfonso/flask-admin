@@ -2,14 +2,14 @@ from functools import wraps
 import sys
 
 from flask import Flask, g, redirect, render_template, request, session, url_for
-from flaskext import admin
+from flask.ext import admin
 from sqlalchemy import create_engine, Table
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, Text, String, Float, Time, Enum
 from sqlalchemy.orm import relationship
 from sqlalchemy.schema import ForeignKey
-from flaskext.wtf import Form, TextField
+from flask.ext.wtf import Form, TextField
 
 Base = declarative_base()
 
@@ -76,7 +76,7 @@ def login_required(f):
 
 
 def create_app(database_uri='sqlite://'):
-    app = Flask('view_decorator')
+    app = Flask(__name__)
     app.config['SECRET_KEY'] = 'not secure'
 
     app.engine = create_engine(database_uri, convert_unicode=True)

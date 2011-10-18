@@ -6,7 +6,7 @@
 
 Flask-Admin
 ===========
-.. module:: flaskext.admin
+.. module:: flask.ext.admin
 
 Flask-Admin is a `Flask`_ extension that aims to be a flexible,
 customizable web-based interface to your datastore. Currently,
@@ -14,13 +14,18 @@ Flask-Admin only works with SQLAlchemy declarative models but support
 for additional datastores will be added in future versions.
 
 .. note::
-   Flask-Admin will only work with versions of Flask 0.7 or above.
+
+   Flask-Admin will only work with versions of Flask 0.7 or above. As
+   of Flask-Admin version 0.2.x, Flask-Admin uses the new extension
+   namespace so if you are using Flask 0.7, you will need to use the
+   `extension compatability module`_.
+
 
 How it works
 ------------
 
-First, create some SQLAlchemy declarative models using `SQLAlchemy`_
-or `Flask-SQLAlchemy`_. For example::
+First create some SQLAlchemy declarative models using `SQLAlchemy`_ or
+`Flask-SQLAlchemy`_. For example::
 
     from sqlalchemy import create_engine, Column, Integer, String
     from sqlalchemy.ext.declarative import declarative_base
@@ -58,6 +63,7 @@ or `Flask-SQLAlchemy`_. For example::
 Then create a blueprint using those models and your sqlalchemy
 session::
 
+    from flask.ext import admin
     from sqlalchemy.orm import scoped_session, sessionmaker
 
     db_session = scoped_session(sessionmaker(
@@ -78,7 +84,7 @@ auto-incrementing integer, because changing a primary key changes the
 nature of foreign key relationships. If you want to expose the primary
 key, set ``exclude_pks=False`` in the :func:`create_admin_blueprint()` call.
 
-Next, register this blueprint on your Flask app::
+Then register this blueprint on your Flask app::
 
     app = Flask(__name__)
     app.register_blueprint(admin_blueprint, url_prefix='/admin')
@@ -282,3 +288,4 @@ API
 .. _Flask-SQLAlchemy: http://packages.python.org/Flask-SQLAlchemy/
 .. _example directory: https://github.com/wilsaj/flask-admin/tree/master/example
 .. _view decorator example: https://github.com/wilsaj/flask-admin/tree/master/example/authentication/view_decorator.py
+.. _extension compatability module: http://flask.pocoo.org/docs/extensions/#flask-before-0-8
