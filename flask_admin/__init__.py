@@ -16,6 +16,7 @@ import inspect
 import os
 import time
 import types
+import inspect
 
 import flask
 from flask import (current_app, flash, g, Module, render_template,
@@ -93,16 +94,20 @@ def create_admin_blueprint(
         template_folder=os.path.join(_get_admin_extension_dir(), 'templates'),
         **kwargs)
 
-    model_dict = {}
+    model_dict = {} 
 
     if not model_forms:
         model_forms = {}
 
     if not disallow_add_models:
         disallow_add_models = []
+    else:
+        disallow_add_models = map(_normalize_model, disallow_add_models)
 
     if not prevent_delete_models:
         prevent_delete_models = []
+    else:
+        prevent_delete_models = map(_normalize_model, prevent_delete_models)  
 
     #XXX: fix base handling so it will work with non-Declarative models
     if type(models) == types.ModuleType:
@@ -133,7 +138,7 @@ def create_admin_blueprint(
             @wraps(f)
             def wrapper(*args, **kwds):
                 return f(*args, **kwds)
-            return wrapper
+            return wrapper     
 
     def create_index_view():
         @view_decorator
@@ -318,6 +323,16 @@ def create_admin_blueprint(
 
     return admin_blueprint
 
+
+def _normalize_model(model):
+    """
+    Determine if the model is a class. If so, use the cannonical class
+    name, otherwise, passthrough
+    """
+    if inspect.isclass(model):
+        return str(model.__name__)
+    else: 
+        return model  
 
 def _get_admin_extension_dir():
     """
